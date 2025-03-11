@@ -4,7 +4,7 @@
 
 Les contrôleurs sont responsables de la gestion des **requêtes** entrantes et de la renvoie des **réponses** au client. 
 
-(img controller)
+![Controllers_1](https://github.com/user-attachments/assets/0892d9f7-98e4-4f35-86c1-c7e5da134835)
 
 Un contrôleur a pour but de recevoir des requêtes spécifiques pour l’application. Le mécanisme de **routage** détermine quel contrôleur reçoit quelles requêtes.
 Souvent, chaque contrôleur a plusieurs routes, et différentes routes peuvent exécuter différentes actions.
@@ -54,7 +54,8 @@ Lorsqu'on utilise cette méthode, cela renverra un code d’état 200 et la rép
 
 Nest utilise deux options différentes pour manipuler les réponses :
 
-(capt res)
+![Capture d’écran du 2025-03-11 17-26-56](https://github.com/user-attachments/assets/86bbe077-cec1-4b1b-aa6b-3c328dadbb8b)
+
 
 **! Danger !**
 
@@ -87,7 +88,7 @@ L’objet de requête représente la requête HTTP et possède des propriétés 
 Dans la plupart des cas, il n’est pas nécessaire de saisir ces propriétés manuellement. Nous pouvons utiliser des décorateurs dédiés à la place, 
 tels que `@Body()` ou `@Query()`, qui sont disponibles par défaut. Voici une liste des décorateurs fournis :
 
-(img capt)
+![Capture d’écran du 2025-03-11 17-42-51](https://github.com/user-attachments/assets/007c03a5-4c99-4d81-a3eb-22ba814d4344)
 
 ### Ressources 
 
