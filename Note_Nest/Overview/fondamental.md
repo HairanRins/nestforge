@@ -4,7 +4,7 @@ Nest tire parti des dernières fonctionnalités du langage, donc pour l’utilis
 
 Les contenus du src/ après création du projet 
 
-(img fichier)
+![Capture d’écran du 2025-03-11 16-18-59](https://github.com/user-attachments/assets/f2a719ad-ef43-4844-8e16-ed980b22b340)
 
 Le fichier `main.ts` inclut une fonction asynchrone, qui va démarrer notre application.
 
