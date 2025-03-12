@@ -8,9 +8,10 @@ Les providers sont un concept fondamental dans Nest. Beaucoup des classes de bas
 L’idée principale d’un provider est qu’il peut être **injecté** comme dépendance ; cela signifie que les objets peuvent créer diverses relations entre eux,
 et la fonction de “connecter” ces objets peut être largement déléguée au système d’exécution de Nest.
 
-(img capt)
+![Capture d’écran du 2025-03-11 21-26-50](https://github.com/user-attachments/assets/301c41c4-c8bf-4549-b791-c35d09509250)
 
-(img down)
+![Components_1](https://github.com/user-attachments/assets/c2aa1b81-c1f3-466f-af6f-3facc95380a6)
+
 
 Les contrôleurs doivent gérer les requêtes HTTP et déléguer des tâches plus complexes aux **providers**.
 Les providers sont de simples classes JavaScript qui sont déclarées comme `providers` dans un module.
