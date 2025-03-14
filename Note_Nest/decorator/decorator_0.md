@@ -1,4 +1,5 @@
-NestJS est un framework Node.js basé sur Express (ou Fastify) qui permet de construire des applications backend robustes et évolutives. Les **decorators** jouent un rôle central dans NestJS, car ils permettent d'ajouter des méta-données à vos classes, méthodes, propriétés ou paramètres pour configurer le comportement du framework.
+NestJS est un framework Node.js basé sur Express (ou Fastify) qui permet de construire des applications backend robustes et évolutives. Les **decorators** jouent un rôle central dans NestJS, 
+car ils permettent d'ajouter des méta-données à vos classes, méthodes, propriétés ou paramètres pour configurer le comportement du framework.
 
 Voici une liste des decorators les plus importants à connaître en NestJS, accompagnée de leurs définitions, rôles, exemples et cas d'utilisation :
 
@@ -312,4 +313,5 @@ function loggerMiddleware(req, res, next) {
 ---
 
 ### Conclusion
-Les decorators sont au cœur de NestJS et permettent de structurer l'application, de configurer les comportements, et de simplifier le développement grâce à des annotations claires et expressives. En maîtrisant ces decorators, vous serez capable de créer des applications backend performantes et bien organisées.
+Les decorators sont au cœur de NestJS et permettent de structurer l'application, de configurer les comportements, 
+et de simplifier le développement grâce à des annotations claires et expressives. En maîtrisant ces decorators, vous serez capable de créer des applications backend performantes et bien organisées.
