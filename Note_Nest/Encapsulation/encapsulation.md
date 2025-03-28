@@ -1,4 +1,4 @@
-# Encapsulation en NestJS 
+# Encapsulation en NestJS
 
 Le mot qui résume **`abstract`**, **`private`**, **`protected`**, et **`readonly`** est **"Encapsulation"**.  
 
