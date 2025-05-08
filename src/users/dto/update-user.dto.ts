@@ -1,4 +1,10 @@
-import { IsEmail, IsOptional, IsString, MinLength, Matches } from 'class-validator';
+import {
+  IsEmail,
+  IsOptional,
+  IsString,
+  MinLength,
+  Matches,
+} from 'class-validator';
 
 export class UpdateUserDto {
   @IsOptional()
@@ -19,7 +25,8 @@ export class UpdateUserDto {
   @IsString()
   @MinLength(6)
   @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    message: 'Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre',
+    message:
+      'Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre',
   })
   password?: string;
-} 
+}

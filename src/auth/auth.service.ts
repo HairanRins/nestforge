@@ -7,12 +7,16 @@ import { RegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private userService: UserService, private jwtService: JwtService) {}
+  constructor(
+    private userService: UserService,
+    private jwtService: JwtService,
+  ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.userService.findByEmail(email);
-    if (user && await bcrypt.compare(password, user.password)) {
-        const { password, ...result } = (user as UserDocument).toObject();
+    if (user && (await bcrypt.compare(password, user.password))) {
+      const result = (user as UserDocument).toObject();
+      delete result.password;
       return result;
     }
     throw new UnauthorizedException();
@@ -31,7 +35,8 @@ export class AuthService {
       ...registerDto,
       password: hashedPassword,
     });
-    const { password, ...result } = (user as UserDocument).toObject();
+    const result = (user as UserDocument).toObject();
+    delete result.password;
     return result;
   }
 }

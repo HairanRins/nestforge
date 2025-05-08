@@ -6,13 +6,16 @@ import { Message, MessageSchema } from './schema/message.schema';
 import { MessageGateway } from './messages.gateway';
 import { MessageService } from './messages.service';
 import { MessageController } from './messages.controller';
-import { Conversation, ConversationSchema } from '../conversations/schema/conversation.schema';
+import {
+  Conversation,
+  ConversationSchema,
+} from '../conversations/schema/conversation.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Message.name, schema: MessageSchema },
-      { name: Conversation.name, schema: ConversationSchema }
+      { name: Conversation.name, schema: ConversationSchema },
     ]),
     JwtModule.registerAsync({
       imports: [ConfigModule],

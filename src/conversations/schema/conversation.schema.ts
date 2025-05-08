@@ -8,9 +8,6 @@ export class Conversation {
   @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }] })
   participants: Types.ObjectId[];
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'Message' }], default: [] })
-  messages: Types.ObjectId[];
-
   @Prop()
   createdAt: Date;
 

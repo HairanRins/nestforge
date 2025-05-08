@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
@@ -17,24 +17,27 @@ export class AuthController {
       example1: {
         value: {
           email: 'user@example.com',
-          password: 'Password123!'
+          password: 'Password123!',
         },
-        summary: 'Exemple de connexion'
-      }
-    }
+        summary: 'Exemple de connexion',
+      },
+    },
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Connexion réussie',
     schema: {
       example: {
-        access_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
-      }
-    }
+        access_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+      },
+    },
   })
   @ApiResponse({ status: 401, description: 'Identifiants invalides' })
   async login(@Body() loginDto: LoginDto) {
-    const user = await this.authService.validateUser(loginDto.email, loginDto.password);
+    const user = await this.authService.validateUser(
+      loginDto.email,
+      loginDto.password,
+    );
     return this.authService.login(user);
   }
 
@@ -48,14 +51,14 @@ export class AuthController {
           firstName: 'John',
           lastName: 'Doe',
           email: 'john.doe@example.com',
-          password: 'Password123!'
+          password: 'Password123!',
         },
-        summary: 'Exemple d\'inscription'
-      }
-    }
+        summary: "Exemple d'inscription",
+      },
+    },
   })
-  @ApiResponse({ 
-    status: 201, 
+  @ApiResponse({
+    status: 201,
     description: 'Inscription réussie',
     schema: {
       example: {
@@ -63,9 +66,9 @@ export class AuthController {
         firstName: 'John',
         lastName: 'Doe',
         email: 'john.doe@example.com',
-        createdAt: '2024-05-06T12:00:00.000Z'
-      }
-    }
+        createdAt: '2024-05-06T12:00:00.000Z',
+      },
+    },
   })
   @ApiResponse({ status: 400, description: 'Données invalides' })
   async register(@Body() registerDto: RegisterDto) {

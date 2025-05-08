@@ -20,7 +20,7 @@ import { MessagesModule } from './messages/messages.module';
     AuthModule,
     UserModule,
     ConversationsModule,
-    MessagesModule
+    MessagesModule,
   ],
 })
 export class AppModule {}

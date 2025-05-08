@@ -32,7 +32,7 @@ export class MessageGateway
     private readonly jwtService: JwtService,
   ) {}
 
-  afterInit(server: Server) {
+  afterInit() {
     this.logger.log('WebSocket initialized');
   }
 
@@ -43,7 +43,7 @@ export class MessageGateway
         const payload = this.jwtService.verify(token);
         client.data.user = payload;
         this.logger.log(`Client connected: ${payload.sub}`);
-      } catch (err) {
+      } catch {
         this.logger.warn('Invalid token, disconnecting client');
         client.disconnect();
       }
@@ -67,7 +67,6 @@ export class MessageGateway
       payload.receiverId,
       payload.content,
     );
-    
 
     // Émet le message à tous les clients dans la même conversation
     this.server.to(payload.conversationId).emit('newMessage', message);

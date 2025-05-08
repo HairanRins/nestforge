@@ -1,24 +1,33 @@
-import { IsString, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsMongoId } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateMessageDto {
+  @ApiProperty({ description: 'Contenu du message' })
   @IsNotEmpty()
   @IsString()
   content: string;
 
+  @ApiProperty({ description: 'ID du destinataire' })
   @IsNotEmpty()
-  @IsUUID()
-  senderId: string;
+  @IsMongoId()
+  receiverId: string;
 
+  @ApiProperty({ description: 'ID de la conversation' })
   @IsNotEmpty()
-  @IsUUID()
+  @IsMongoId()
   conversationId: string;
 
+  @ApiPropertyOptional({ description: 'URL de la pièce jointe (optionnel)' })
   @IsOptional()
   @IsString()
   attachmentUrl?: string;
 
-  @IsNotEmpty()
-  @IsUUID()
-  receiverId: string;
+  // Alias pour la compatibilité avec les deux versions
+  get receiver(): string {
+    return this.receiverId;
+  }
 
+  get conversation(): string {
+    return this.conversationId;
+  }
 }

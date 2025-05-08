@@ -1,19 +1,23 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Conversation, ConversationDocument } from './schema/conversation.schema';
+import {
+  Conversation,
+  ConversationDocument,
+} from './schema/conversation.schema';
 import { UserService } from '../users/users.service';
 
 @Injectable()
 export class ConversationService {
   constructor(
-    @InjectModel(Conversation.name) private conversationModel: Model<ConversationDocument>,
+    @InjectModel(Conversation.name)
+    private conversationModel: Model<ConversationDocument>,
     private userService: UserService,
   ) {}
 
   async create(participantIds: string[]) {
     const conversation = new this.conversationModel({
-      participants: participantIds.map(id => new Types.ObjectId(id)),
+      participants: participantIds.map((id) => new Types.ObjectId(id)),
     });
     return conversation.save();
   }
@@ -32,7 +36,6 @@ export class ConversationService {
     const conversation = await this.conversationModel
       .findById(id)
       .populate('participants', 'firstName lastName email')
-      .populate('messages')
       .exec();
 
     if (!conversation) {
@@ -40,16 +43,5 @@ export class ConversationService {
     }
 
     return conversation;
-  }
-
-  async addMessage(conversationId: string, messageId: string) {
-    const conversation = await this.conversationModel.findById(conversationId);
-    if (!conversation) {
-      throw new NotFoundException('Conversation non trouvée');
-    }
-
-    conversation.messages.push(new Types.ObjectId(messageId));
-    conversation.updatedAt = new Date();
-    return conversation.save();
   }
 }

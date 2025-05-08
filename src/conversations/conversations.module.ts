@@ -8,12 +8,12 @@ import { UserModule } from '../users/users.module';
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: Conversation.name, schema: ConversationSchema }
+      { name: Conversation.name, schema: ConversationSchema },
     ]),
-    UserModule
+    UserModule,
   ],
   controllers: [ConversationController],
   providers: [ConversationService],
-  exports: [ConversationService]
+  exports: [ConversationService],
 })
 export class ConversationsModule {}

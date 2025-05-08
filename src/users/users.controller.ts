@@ -1,8 +1,21 @@
-import { Body, Controller, Get, Param, Post, UseGuards, Request } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { UserService } from './users.service';
 import { User } from './schema/user.schema';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -27,16 +40,16 @@ export class UserController {
           id: '681a0b055cb51fbdd728520f',
           firstName: 'John',
           lastName: 'Doe',
-          email: 'john@example.com'
+          email: 'john@example.com',
         },
         {
           id: '681a0c089906df218996667b',
           firstName: 'Jane',
           lastName: 'Smith',
-          email: 'jane@example.com'
-        }
-      ]
-    }
+          email: 'jane@example.com',
+        },
+      ],
+    },
   })
   async findAll(@Request() req) {
     // Exclure l'utilisateur actuel de la liste
