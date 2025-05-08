@@ -33,23 +33,7 @@ export class UserController {
   @ApiOperation({ summary: 'Récupérer la liste des utilisateurs' })
   @ApiResponse({
     status: 200,
-    description: 'Liste des utilisateurs',
-    schema: {
-      example: [
-        {
-          id: '681a0b055cb51fbdd728520f',
-          firstName: 'John',
-          lastName: 'Doe',
-          email: 'john@example.com',
-        },
-        {
-          id: '681a0c089906df218996667b',
-          firstName: 'Jane',
-          lastName: 'Smith',
-          email: 'jane@example.com',
-        },
-      ],
-    },
+    description: 'Liste des utilisateurs'
   })
   async findAll(@Request() req) {
     // Exclure l'utilisateur actuel de la liste

@@ -59,16 +59,7 @@ export class AuthController {
   })
   @ApiResponse({
     status: 201,
-    description: 'Inscription réussie',
-    schema: {
-      example: {
-        id: '507f1f77bcf86cd799439011',
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john.doe@example.com',
-        createdAt: '2024-05-06T12:00:00.000Z',
-      },
-    },
+    description: 'Inscription réussie'
   })
   @ApiResponse({ status: 400, description: 'Données invalides' })
   async register(@Body() registerDto: RegisterDto) {

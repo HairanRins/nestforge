@@ -8,7 +8,7 @@ import {
   UseGuards,
   Request,
   Logger,
-  Put,
+  Patch,
 } from '@nestjs/common';
 
 import {
@@ -79,7 +79,7 @@ export class MessageController {
     );
   }
 
-  @Put('conversations/:conversationId/read')
+  @Patch('conversations/:conversationId/read')
   @ApiOperation({
     summary: "Marquer tous les messages d'une conversation comme lus",
   })
@@ -93,8 +93,6 @@ export class MessageController {
       req.user.userId,
     );
   }
-
-
 
   @Get('with/:receiverId')
   @ApiOperation({
@@ -114,7 +112,7 @@ export class MessageController {
     );
   }
 
-  @Put(':messageId/read')
+  @Patch(':messageId/read')
   @ApiOperation({ summary: 'Marquer un message comme lu' })
   @ApiResponse({ status: 200, description: 'Message marqué comme lu' })
   async markMessageAsRead(
