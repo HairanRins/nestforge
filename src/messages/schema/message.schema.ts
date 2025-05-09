@@ -20,6 +20,25 @@ export class Message {
   @Prop({ type: Boolean, default: false })
   read: boolean;
 
+  @Prop({ type: Types.ObjectId, ref: 'Message' })
+  parentMessage: Types.ObjectId;
+
+  @Prop({ type: Boolean, default: false })
+  isReply: boolean;
+
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }] })
+  mentions: Types.ObjectId[];
+
+  @Prop({
+    type: [
+      {
+        userId: { type: Types.ObjectId, ref: 'User' },
+        read: { type: Boolean, default: false },
+      },
+    ],
+  })
+  notifications: Array<{ userId: Types.ObjectId; read: boolean }>;
+
   @Prop()
   createdAt: Date;
 

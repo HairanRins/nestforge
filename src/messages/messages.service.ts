@@ -4,6 +4,7 @@ import { Message, MessageDocument } from './schema/message.schema';
 import { Model, Types } from 'mongoose';
 import { Conversation } from '../conversations/schema/conversation.schema';
 import { CreateMessageDto } from './dto/create-message.dto';
+import { MentionsService } from './mentions.service';
 
 @Injectable()
 export class MessageService {
@@ -13,9 +14,13 @@ export class MessageService {
     @InjectModel(Message.name) private messageModel: Model<MessageDocument>,
     @InjectModel(Conversation.name)
     private conversationModel: Model<Conversation>,
+    private mentionsService: MentionsService,
   ) {}
 
-  async create(createMessageDto: CreateMessageDto, senderId: string) {
+  async create(
+    createMessageDto: CreateMessageDto,
+    senderId: string,
+  ): Promise<MessageDocument> {
     this.logger.debug(
       `Creating message from ${senderId} to ${createMessageDto.receiver} in conversation ${createMessageDto.conversation}`,
     );
@@ -47,9 +52,25 @@ export class MessageService {
         receiver: new Types.ObjectId(createMessageDto.receiver),
         conversation: new Types.ObjectId(createMessageDto.conversation),
         attachmentUrl: createMessageDto.attachmentUrl,
-      });
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }) as MessageDocument;
 
       const savedMessage = await message.save();
+
+      // Process mentions
+      const mentions = await this.mentionsService.detectMentions(
+        createMessageDto.content,
+      );
+      if (mentions.length > 0) {
+        await this.mentionsService.validateMentions(mentions);
+        await this.mentionsService.createMentionsNotification(
+          savedMessage._id.toString(),
+          mentions,
+        );
+      }
+
+      return savedMessage;
 
       this.logger.debug(`Message created successfully: ${savedMessage._id}`);
       return savedMessage;
@@ -99,16 +120,48 @@ export class MessageService {
   }
 
   async getMessages(userId: string) {
-    return this.messageModel
+    const messages = await this.messageModel
       .find({
         $or: [
           { sender: new Types.ObjectId(userId) },
           { receiver: new Types.ObjectId(userId) },
         ],
       })
-      .populate('sender', 'firstName lastName email')
-      .populate('receiver', 'firstName lastName email')
+      .populate('sender', 'firstName lastName')
+      .populate('receiver', 'firstName lastName')
+      .populate('parentMessage', 'content sender')
       .sort({ createdAt: 1 });
+
+    return messages.map((message: any) => ({
+      id: message._id.toString(),
+      content: message.content,
+      sender: {
+        id: message.sender._id.toString(),
+        firstName: message.sender.firstName,
+        lastName: message.sender.lastName,
+      },
+      receiver: {
+        id: message.receiver._id.toString(),
+        firstName: message.receiver.firstName,
+        lastName: message.receiver.lastName,
+      },
+      conversationId: message.conversation.toString(),
+      read: message.read,
+      parentMessage: message.parentMessage
+        ? {
+            id: message.parentMessage._id.toString(),
+            content: message.parentMessage.content,
+            sender: {
+              id: message.parentMessage.sender._id.toString(),
+              firstName: message.parentMessage.sender.firstName,
+              lastName: message.parentMessage.sender.lastName,
+            },
+          }
+        : undefined,
+      isReply: message.isReply,
+      createdAt: message.createdAt,
+      updatedAt: message.updatedAt,
+    }));
   }
 
   async getConversationMessages(conversationId: string, userId: string) {
@@ -128,15 +181,47 @@ export class MessageService {
     }
 
     // Récupère tous les messages
-    return this.messageModel
+    const messages = await this.messageModel
       .find({
         conversation: new Types.ObjectId(conversationId),
       })
-      .select('-__v') // Exclut le champ __v
-      .populate('sender', '_id') // Seulement l'_id du sender
-      .populate('receiver', '_id') // Seulement l'_id du receiver
+      .select('-__v')
+      .populate('sender', '_id firstName lastName')
+      .populate('receiver', '_id firstName lastName')
+      .populate('parentMessage', 'content sender')
       .sort({ createdAt: 1 })
       .lean();
+
+    return messages.map((message: any) => ({
+      id: message._id.toString(),
+      content: message.content,
+      sender: {
+        id: message.sender._id.toString(),
+        firstName: message.sender.firstName,
+        lastName: message.sender.lastName,
+      },
+      receiver: {
+        id: message.receiver._id.toString(),
+        firstName: message.receiver.firstName,
+        lastName: message.receiver.lastName,
+      },
+      conversationId: message.conversation.toString(),
+      read: message.read,
+      parentMessage: message.parentMessage
+        ? {
+            id: message.parentMessage._id.toString(),
+            content: message.parentMessage.content,
+            sender: {
+              id: message.parentMessage.sender._id.toString(),
+              firstName: message.parentMessage.sender.firstName,
+              lastName: message.parentMessage.sender.lastName,
+            },
+          }
+        : undefined,
+      isReply: message.isReply,
+      createdAt: message.createdAt,
+      updatedAt: message.updatedAt,
+    }));
   }
 
   async getUserConversations(userId: string) {
@@ -247,7 +332,7 @@ export class MessageService {
   }
 
   async getMessagesByReceiver(userId: string, receiverId: string) {
-    return this.messageModel
+    const messages = await this.messageModel
       .find({
         $or: [
           {
@@ -261,12 +346,97 @@ export class MessageService {
         ],
       })
       .select('-__v')
-      .populate('sender', '_id')
-      .populate('receiver', '_id')
+      .populate('sender', '_id firstName lastName')
+      .populate('receiver', '_id firstName lastName')
+      .populate('parentMessage', 'content sender')
       .sort({ createdAt: 1 })
       .lean();
+
+    return messages.map((message: any) => ({
+      id: message._id.toString(),
+      content: message.content,
+      sender: {
+        id: message.sender._id.toString(),
+        firstName: message.sender.firstName,
+        lastName: message.sender.lastName,
+      },
+      receiver: {
+        id: message.receiver._id.toString(),
+        firstName: message.receiver.firstName,
+        lastName: message.receiver.lastName,
+      },
+      conversationId: message.conversation.toString(),
+      read: message.read,
+      parentMessage: message.parentMessage
+        ? {
+            id: message.parentMessage._id.toString(),
+            content: message.parentMessage.content,
+            sender: {
+              id: message.parentMessage.sender._id.toString(),
+              firstName: message.parentMessage.sender.firstName,
+              lastName: message.parentMessage.sender.lastName,
+            },
+          }
+        : undefined,
+      isReply: message.isReply,
+      createdAt: message.createdAt,
+      updatedAt: message.updatedAt,
+    }));
   }
 
+  async replyToMessage(
+    messageId: string,
+    senderId: string,
+    content: string,
+  ): Promise<MessageDocument> {
+    this.logger.debug(`Replying to message ${messageId} by user ${senderId}`);
+
+    try {
+      // Vérifier que le message existe
+      const message = await this.messageModel.findById(messageId);
+
+      if (!message) {
+        throw new NotFoundException('Message not found');
+      }
+
+      // Vérifier que l'utilisateur est le receiver du message
+      if (message.receiver.toString() !== senderId) {
+        throw new NotFoundException('User is not the receiver of this message');
+      }
+
+      // Process mentions
+      const mentions = await this.mentionsService.detectMentions(content);
+      if (mentions.length > 0) {
+        await this.mentionsService.validateMentions(mentions);
+      }
+
+      // Créer la réponse
+      const reply = await this.messageModel.create({
+        content,
+        sender: new Types.ObjectId(senderId),
+        receiver: message.sender,
+        conversation: message.conversation,
+        parentMessage: message,
+        isReply: true,
+        mentions:
+          mentions.length > 0
+            ? await this.mentionsService.createMentionsNotification(
+                messageId,
+                mentions,
+              )
+            : [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      return reply;
+    } catch (error) {
+      this.logger.error(`Error replying to message: ${error.message}`);
+      throw error;
+    }
+  }
+
+  // ...
   async markMessageAsRead(messageId: string, userId: string) {
     this.logger.debug(
       `Marking message ${messageId} as read for user: ${userId}`,

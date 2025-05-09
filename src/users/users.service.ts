@@ -7,7 +7,7 @@ import { User, UserDocument } from './schema/user.schema';
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async create(createUserDto: any): Promise<User> {
+  async create(createUserDto: Omit<User, '_id'>): Promise<User> {
     const createdUser = new this.userModel(createUserDto);
     return createdUser.save();
   }

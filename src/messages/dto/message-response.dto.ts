@@ -1,28 +1,69 @@
-import { IsString, IsNotEmpty, IsUUID } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsObject,
+  IsBoolean,
+  IsOptional,
+  IsDate,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class MessageResponseDto {
-  @IsUUID()
+  @IsString()
+  @IsNotEmpty()
   id: string;
 
   @IsString()
   @IsNotEmpty()
   content: string;
 
-  @IsUUID()
-  senderId: string;
+  @IsObject()
+  @IsNotEmpty()
+  @Type(() => Object)
+  sender: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  };
 
-  @IsUUID()
-  receiverId: string;
+  @IsObject()
+  @IsNotEmpty()
+  @Type(() => Object)
+  receiver: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  };
 
-  @IsUUID()
+  @IsString()
+  @IsNotEmpty()
   conversationId: string;
 
+  @IsBoolean()
   @IsNotEmpty()
   read: boolean;
 
+  @IsOptional()
+  @IsObject()
+  @Type(() => Object)
+  parentMessage?: {
+    id: string;
+    content: string;
+    sender: {
+      id: string;
+      firstName: string;
+      lastName: string;
+    };
+  };
+
+  @IsBoolean()
+  isReply: boolean;
+
+  @IsDate()
   @IsNotEmpty()
   createdAt: Date;
 
+  @IsDate()
   @IsNotEmpty()
   updatedAt: Date;
 }

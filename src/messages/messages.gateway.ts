@@ -5,20 +5,28 @@ import {
   OnGatewayInit,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  ConnectedSocket,
+  MessageBody,
 } from '@nestjs/websockets';
+import { UseGuards } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 
 import { JwtService } from '@nestjs/jwt';
-
 import { Logger } from '@nestjs/common';
 import { MessageService } from './messages.service';
 import { CreateMessageDto } from './dto/create-message.dto';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { MessageDocument } from './schema/message.schema';
 
 @WebSocketGateway({
   cors: {
     origin: '*',
   },
 })
+@ApiTags('messages')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 export class MessageGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
@@ -58,9 +66,14 @@ export class MessageGateway
   }
 
   @SubscribeMessage('sendMessage')
-  async handleMessage(client: Socket, payload: CreateMessageDto) {
+  async handleMessage(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: CreateMessageDto,
+  ): Promise<MessageDocument> {
     const senderId = client.data.user?.sub;
-    if (!senderId) return;
+    if (!senderId) {
+      throw new Error('User not authenticated');
+    }
 
     const message = await this.messageService.sendMessage(
       senderId,
@@ -70,16 +83,36 @@ export class MessageGateway
 
     // Émet le message à tous les clients dans la même conversation
     this.server.to(payload.conversationId).emit('newMessage', message);
+
+    // Émet les notifications de mentions
+    if (message.mentions && message.mentions.length > 0) {
+      message.mentions.forEach((userId) => {
+        this.server.to(userId.toString()).emit('mentionNotification', {
+          messageId: message._id,
+          senderId: message.sender,
+          content: message.content,
+          conversationId: message.conversation,
+        });
+      });
+    }
+
+    return message;
   }
 
   @SubscribeMessage('joinConversation')
-  handleJoinConversation(client: Socket, conversationId: string) {
+  handleJoinConversation(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() conversationId: string,
+  ) {
     client.join(conversationId);
     this.logger.log(`Client joined conversation: ${conversationId}`);
   }
 
   @SubscribeMessage('leaveConversation')
-  handleLeaveConversation(client: Socket, conversationId: string) {
+  handleLeaveConversation(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() conversationId: string,
+  ) {
     client.leave(conversationId);
     this.logger.log(`Client left conversation: ${conversationId}`);
   }

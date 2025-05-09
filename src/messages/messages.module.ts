@@ -6,6 +6,8 @@ import { Message, MessageSchema } from './schema/message.schema';
 import { MessageGateway } from './messages.gateway';
 import { MessageService } from './messages.service';
 import { MessageController } from './messages.controller';
+import { MentionsService } from './mentions.service';
+import { UserModule } from '../users/users.module';
 import {
   Conversation,
   ConversationSchema,
@@ -13,6 +15,7 @@ import {
 
 @Module({
   imports: [
+    UserModule,
     MongooseModule.forFeature([
       { name: Message.name, schema: MessageSchema },
       { name: Conversation.name, schema: ConversationSchema },
@@ -29,7 +32,7 @@ import {
     }),
   ],
   controllers: [MessageController],
-  providers: [MessageGateway, MessageService],
+  providers: [MessageGateway, MessageService, MentionsService],
   exports: [MessageService],
 })
 export class MessagesModule {}

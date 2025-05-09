@@ -16,7 +16,6 @@ import {
   ApiBody,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ConversationResponseDto } from './dto';
 
 @ApiTags('conversations')
 @ApiBearerAuth()
@@ -55,13 +54,13 @@ export class ConversationController {
   })
   @ApiResponse({
     status: 201,
-    description: 'Conversation créée avec succès'
+    description: 'Conversation créée avec succès',
   })
   async createConversation(
     @Request() req,
     @Body() body: { participantIds: string[] },
   ) {
-    const allParticipants = [...body.participantIds, req.user.userId];
+    const allParticipants = [...body.participantIds, req.user.userId].flat();
     return this.conversationService.create(allParticipants);
   }
 
@@ -71,7 +70,7 @@ export class ConversationController {
   })
   @ApiResponse({
     status: 200,
-    description: 'Liste des conversations'
+    description: "Liste des conversations de l'utilisateur",
   })
   async getUserConversations(@Request() req) {
     return this.conversationService.findByUserId(req.user.userId);
@@ -81,7 +80,7 @@ export class ConversationController {
   @ApiOperation({ summary: 'Récupérer une conversation spécifique' })
   @ApiResponse({
     status: 200,
-    description: 'Détails de la conversation'
+    description: 'Détails de la conversation',
   })
   async getConversation(@Request() req, @Param('id') id: string) {
     return this.conversationService.findById(id);

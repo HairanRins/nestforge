@@ -16,10 +16,12 @@ import {
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
+  ApiBody,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { MessageService } from './messages.service';
 import { CreateMessageDto } from './dto/create-message.dto';
+import { ReplyMessageDto } from './dto/reply-message.dto';
 
 @ApiTags('messages')
 @ApiBearerAuth()
@@ -109,6 +111,34 @@ export class MessageController {
     return this.messageService.getMessagesByReceiver(
       req.user.userId,
       receiverId,
+    );
+  }
+
+  @Post(':messageId/reply')
+  @ApiOperation({ summary: 'Répondre à un message' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        content: {
+          type: 'string',
+          example: 'Ceci est une réponse',
+          description: 'Contenu de la réponse',
+        },
+      },
+      required: ['content'],
+    },
+  })
+  @ApiResponse({ status: 201, description: 'Réponse créée avec succès' })
+  async replyToMessage(
+    @Request() req,
+    @Param('messageId') messageId: string,
+    @Body() replyDto: ReplyMessageDto,
+  ) {
+    return this.messageService.replyToMessage(
+      messageId,
+      req.user.userId,
+      replyDto.content,
     );
   }
 

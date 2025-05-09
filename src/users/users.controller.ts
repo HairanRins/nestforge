@@ -25,7 +25,17 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  async create(@Body() userData: Partial<User>): Promise<User> {
+  @ApiOperation({ summary: 'Créer un nouvel utilisateur' })
+  @ApiResponse({
+    status: 201,
+    description: 'Utilisateur créé avec succès',
+    type: User,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Données invalides',
+  })
+  async create(@Body() userData: Omit<User, '_id'>): Promise<User> {
     return this.userService.create(userData);
   }
 
@@ -33,7 +43,7 @@ export class UserController {
   @ApiOperation({ summary: 'Récupérer la liste des utilisateurs' })
   @ApiResponse({
     status: 200,
-    description: 'Liste des utilisateurs'
+    description: 'Liste des utilisateurs',
   })
   async findAll(@Request() req) {
     // Exclure l'utilisateur actuel de la liste

@@ -59,7 +59,7 @@ export class AuthController {
   })
   @ApiResponse({
     status: 201,
-    description: 'Inscription réussie'
+    description: 'Inscription réussie',
   })
   @ApiResponse({ status: 400, description: 'Données invalides' })
   async register(@Body() registerDto: RegisterDto) {
