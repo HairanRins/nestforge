@@ -102,7 +102,32 @@ export class MessageController {
   })
   @ApiResponse({
     status: 200,
-    description: "Messages avec l'utilisateur spécifié",
+    description: "Messages avec l'utilisateur spécifié et informations de conversation",
+    schema: {
+      type: 'object',
+      properties: {
+        conversationId: { type: 'string', description: 'ID de la conversation' },
+        isNewConversation: { type: 'boolean', description: 'Si la conversation vient d\'être créée' },
+        messages: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: { type: 'string' },
+              content: { type: 'string' },
+              sender: { type: 'object' },
+              receiver: { type: 'object' },
+              conversationId: { type: 'string' },
+              read: { type: 'boolean' },
+              parentMessage: { type: 'object', nullable: true },
+              isReply: { type: 'boolean' },
+              createdAt: { type: 'string', format: 'date-time' },
+              updatedAt: { type: 'string', format: 'date-time' },
+            },
+          },
+        },
+      },
+    },
   })
   async getMessagesByReceiver(
     @Request() req,
@@ -114,8 +139,67 @@ export class MessageController {
     );
   }
 
+  @Post('with/:receiverId/reply')
+  @ApiOperation({ summary: 'Répondre au dernier message d\'une conversation' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        content: {
+          type: 'string',
+          example: 'Ceci est une réponse',
+          description: 'Contenu de la réponse',
+        },
+      },
+      required: ['content'],
+    },
+  })
+  @ApiResponse({ status: 201, description: 'Réponse créée avec succès' })
+  async replyToLastMessageInConversation(
+    @Request() req,
+    @Param('receiverId') receiverId: string,
+    @Body() replyDto: ReplyMessageDto,
+  ) {
+    return this.messageService.replyToLastMessageInConversation(
+      receiverId,
+      req.user.userId,
+      replyDto.content,
+    );
+  }
+
+  @Post('notes')
+  @ApiOperation({ summary: 'Créer une nouvelle note personnelle' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        content: {
+          type: 'string',
+          example: 'Ceci est une note personnelle',
+          description: 'Contenu de la note',
+        },
+      },
+      required: ['content'],
+    },
+  })
+  @ApiResponse({ status: 201, description: 'Note créée avec succès' })
+  async createNote(@Request() req, @Body() createNoteDto: ReplyMessageDto) {
+    return this.messageService.replyToLastMessageInConversation(
+      req.user.userId, // receiverId = senderId pour une note personnelle
+      req.user.userId,
+      createNoteDto.content,
+    );
+  }
+
+  @Get('notes')
+  @ApiOperation({ summary: 'Récupérer toutes les notes personnelles' })
+  @ApiResponse({ status: 200, description: 'Liste des notes personnelles' })
+  async getNotes(@Request() req) {
+    return this.messageService.getUserConversations(req.user.userId, true);
+  }
+
   @Post(':messageId/reply')
-  @ApiOperation({ summary: 'Répondre à un message' })
+  @ApiOperation({ summary: 'Répondre à un message spécifique' })
   @ApiBody({
     schema: {
       type: 'object',

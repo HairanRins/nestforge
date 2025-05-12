@@ -5,6 +5,7 @@ import { Model, Types } from 'mongoose';
 import { Conversation } from '../conversations/schema/conversation.schema';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { MentionsService } from './mentions.service';
+import { ConversationService } from '../conversations/conversations.service';
 
 @Injectable()
 export class MessageService {
@@ -15,6 +16,7 @@ export class MessageService {
     @InjectModel(Conversation.name)
     private conversationModel: Model<Conversation>,
     private mentionsService: MentionsService,
+    private conversationService: ConversationService,
   ) {}
 
   async create(
@@ -51,12 +53,18 @@ export class MessageService {
         sender: new Types.ObjectId(senderId),
         receiver: new Types.ObjectId(createMessageDto.receiver),
         conversation: new Types.ObjectId(createMessageDto.conversation),
-        attachmentUrl: createMessageDto.attachmentUrl,
         createdAt: new Date(),
         updatedAt: new Date(),
-      }) as MessageDocument;
+      });
 
       const savedMessage = await message.save();
+
+      // Mettre à jour la conversation avec l'ID du message
+      await this.conversationModel.findByIdAndUpdate(
+        createMessageDto.conversation,
+        { $push: { messages: savedMessage._id } },
+        { new: true },
+      );
 
       // Process mentions
       const mentions = await this.mentionsService.detectMentions(
@@ -165,112 +173,12 @@ export class MessageService {
   }
 
   async getConversationMessages(conversationId: string, userId: string) {
-    // Vérifie que l'utilisateur fait partie de la conversation
-    const isInConversation = await this.messageModel.findOne({
-      conversation: new Types.ObjectId(conversationId),
-      $or: [
-        { sender: new Types.ObjectId(userId) },
-        { receiver: new Types.ObjectId(userId) },
-      ],
-    });
-
-    if (!isInConversation) {
-      throw new NotFoundException(
-        'Conversation non trouvée ou accès non autorisé',
-      );
-    }
-
-    // Récupère tous les messages
-    const messages = await this.messageModel
-      .find({
-        conversation: new Types.ObjectId(conversationId),
-      })
-      .select('-__v')
-      .populate('sender', '_id firstName lastName')
-      .populate('receiver', '_id firstName lastName')
-      .populate('parentMessage', 'content sender')
-      .sort({ createdAt: 1 })
-      .lean();
-
-    return messages.map((message: any) => ({
-      id: message._id.toString(),
-      content: message.content,
-      sender: {
-        id: message.sender._id.toString(),
-        firstName: message.sender.firstName,
-        lastName: message.sender.lastName,
-      },
-      receiver: {
-        id: message.receiver._id.toString(),
-        firstName: message.receiver.firstName,
-        lastName: message.receiver.lastName,
-      },
-      conversationId: message.conversation.toString(),
-      read: message.read,
-      parentMessage: message.parentMessage
-        ? {
-            id: message.parentMessage._id.toString(),
-            content: message.parentMessage.content,
-            sender: {
-              id: message.parentMessage.sender._id.toString(),
-              firstName: message.parentMessage.sender.firstName,
-              lastName: message.parentMessage.sender.lastName,
-            },
-          }
-        : undefined,
-      isReply: message.isReply,
-      createdAt: message.createdAt,
-      updatedAt: message.updatedAt,
-    }));
+    return this.conversationService.getConversationMessages(
+      conversationId,
+      userId,
+    );
   }
 
-  async getUserConversations(userId: string) {
-    const conversations = await this.messageModel.aggregate([
-      {
-        $match: {
-          $or: [
-            { sender: new Types.ObjectId(userId) },
-            { receiver: new Types.ObjectId(userId) },
-          ],
-        },
-      },
-      { $sort: { createdAt: -1 } },
-      {
-        $group: {
-          _id: '$conversation',
-          lastMessage: { $first: '$$ROOT' },
-        },
-      },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'lastMessage.sender',
-          foreignField: '_id',
-          as: 'lastMessage.sender',
-        },
-      },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'lastMessage.receiver',
-          foreignField: '_id',
-          as: 'lastMessage.receiver',
-        },
-      },
-      {
-        $addFields: {
-          'lastMessage.sender': {
-            $arrayElemAt: ['$lastMessage.sender._id', 0],
-          },
-          'lastMessage.receiver': {
-            $arrayElemAt: ['$lastMessage.receiver._id', 0],
-          },
-        },
-      },
-    ]);
-
-    return conversations;
-  }
 
   async markMessagesAsRead(conversationId: string, userId: string) {
     this.logger.debug(
@@ -324,14 +232,44 @@ export class MessageService {
 
   async getUnreadMessagesCount(userId: string) {
     return this.messageModel.countDocuments({
-      $or: [
-        { receiver: new Types.ObjectId(userId), read: false },
-        { sender: new Types.ObjectId(userId), read: false },
-      ],
+      receiver: new Types.ObjectId(userId), 
+      read: false
     });
   }
 
   async getMessagesByReceiver(userId: string, receiverId: string) {
+    // Vérifier si c'est une conversation existante ou une nouvelle
+    const isSelfNote = userId === receiverId;
+    const participantIds = isSelfNote 
+      ? [new Types.ObjectId(userId)]
+      : [
+          new Types.ObjectId(userId),
+          new Types.ObjectId(receiverId),
+        ];
+
+    // Trouver ou créer la conversation
+    let conversation = await this.conversationModel.findOne({
+      participants: {
+        $all: participantIds,
+        $size: isSelfNote ? 1 : 2,
+      },
+      isSelfNote,
+    });
+
+    // Si c'est une nouvelle conversation, la créer
+    if (!conversation && !isSelfNote) {
+      conversation = await this.conversationModel.create({
+        participants: [
+          new Types.ObjectId(userId),
+          new Types.ObjectId(receiverId),
+        ],
+        messages: [],
+        lastMessageAt: new Date(),
+        isSelfNote: false,
+      });
+    }
+
+    // Récupérer les messages de la conversation
     const messages = await this.messageModel
       .find({
         $or: [
@@ -352,91 +290,232 @@ export class MessageService {
       .sort({ createdAt: 1 })
       .lean();
 
-    return messages.map((message: any) => ({
-      id: message._id.toString(),
-      content: message.content,
-      sender: {
-        id: message.sender._id.toString(),
-        firstName: message.sender.firstName,
-        lastName: message.sender.lastName,
-      },
-      receiver: {
-        id: message.receiver._id.toString(),
-        firstName: message.receiver.firstName,
-        lastName: message.receiver.lastName,
-      },
-      conversationId: message.conversation.toString(),
-      read: message.read,
-      parentMessage: message.parentMessage
-        ? {
-            id: message.parentMessage._id.toString(),
-            content: message.parentMessage.content,
-            sender: {
-              id: message.parentMessage.sender._id.toString(),
-              firstName: message.parentMessage.sender.firstName,
-              lastName: message.parentMessage.sender.lastName,
-            },
-          }
-        : undefined,
-      isReply: message.isReply,
-      createdAt: message.createdAt,
-      updatedAt: message.updatedAt,
-    }));
+    return {
+      conversationId: conversation?._id?.toString(),
+      isNewConversation: !conversation,
+      messages: messages.map((message: any) => ({
+        id: message._id.toString(),
+        content: message.content,
+        sender: {
+          id: message.sender._id.toString(),
+          firstName: message.sender.firstName,
+          lastName: message.sender.lastName,
+        },
+        receiver: {
+          id: message.receiver._id.toString(),
+          firstName: message.receiver.firstName,
+          lastName: message.receiver.lastName,
+        },
+        conversationId: message.conversation?.toString(),
+        read: message.read,
+        parentMessage: message.parentMessage
+          ? {
+              id: message.parentMessage._id.toString(),
+              content: message.parentMessage.content,
+              sender: {
+                id: message.parentMessage.sender._id.toString(),
+                firstName: message.parentMessage.sender.firstName,
+                lastName: message.parentMessage.sender.lastName,
+              },
+            }
+          : undefined,
+        isReply: message.isReply,
+        createdAt: message.createdAt,
+        updatedAt: message.updatedAt,
+      })),
+    };
   }
 
   async replyToMessage(
     messageId: string,
     senderId: string,
     content: string,
-  ): Promise<MessageDocument> {
-    this.logger.debug(`Replying to message ${messageId} by user ${senderId}`);
+  ) {
+    this.logger.debug(`Replying to message: ${messageId}`);
 
     try {
-      // Vérifier que le message existe
-      const message = await this.messageModel.findById(messageId);
-
-      if (!message) {
-        throw new NotFoundException('Message not found');
+      // Vérifier que le message parent existe
+      const parentMessage = await this.messageModel.findById(messageId);
+      if (!parentMessage) {
+        throw new NotFoundException('Message parent non trouvé');
       }
 
-      // Vérifier que l'utilisateur est le receiver du message
-      if (message.receiver.toString() !== senderId) {
-        throw new NotFoundException('User is not the receiver of this message');
+      // Vérifier que l'utilisateur est soit l'expéditeur soit le destinataire du message parent
+      if (
+        parentMessage.sender.toString() !== senderId &&
+        parentMessage.receiver.toString() !== senderId
+      ) {
+        throw new NotFoundException(
+          'Vous ne pouvez pas répondre à ce message',
+        );
       }
 
-      // Process mentions
-      const mentions = await this.mentionsService.detectMentions(content);
-      if (mentions.length > 0) {
-        await this.mentionsService.validateMentions(mentions);
-      }
+      // Déterminer le destinataire de la réponse
+      const receiverId =
+        parentMessage.sender.toString() === senderId
+          ? parentMessage.receiver
+          : parentMessage.sender;
 
       // Créer la réponse
-      const reply = await this.messageModel.create({
+      const reply = new this.messageModel({
         content,
         sender: new Types.ObjectId(senderId),
-        receiver: message.sender,
-        conversation: message.conversation,
-        parentMessage: message,
+        receiver: new Types.ObjectId(receiverId),
+        parentMessage: new Types.ObjectId(messageId),
+        conversation: parentMessage.conversation,
         isReply: true,
-        mentions:
-          mentions.length > 0
-            ? await this.mentionsService.createMentionsNotification(
-                messageId,
-                mentions,
-              )
-            : [],
-        createdAt: new Date(),
-        updatedAt: new Date(),
       });
 
-      return reply;
+      const savedReply = await reply.save();
+
+      // Mettre à jour la conversation avec le nouveau message
+      await this.conversationModel.findByIdAndUpdate(
+        parentMessage.conversation,
+        { $push: { messages: savedReply._id } },
+        { new: true },
+      );
+
+      return savedReply;
     } catch (error) {
-      this.logger.error(`Error replying to message: ${error.message}`);
+      this.logger.error(
+        `Erreur lors de la réponse au message: ${error.message}`,
+      );
       throw error;
     }
   }
 
-  // ...
+  async getUserConversations(userId: string, isSelfNote: boolean = false) {
+    if (isSelfNote) {
+      // Pour les notes personnelles
+      return this.conversationModel
+        .find({
+          participants: new Types.ObjectId(userId),
+          isSelfNote: true,
+        })
+        .populate('participants', 'firstName lastName')
+        .sort({ lastMessageAt: -1 });
+    } else {
+      // Pour les conversations normales
+      return this.conversationService.getUserConversations(userId);
+    }
+  }
+
+  async replyToLastMessageInConversation(
+    receiverId: string,
+    senderId: string,
+    content: string,
+  ) {
+    this.logger.debug(`Replying to last message in conversation with user: ${receiverId}`);
+
+    try {
+      const isSelfNote = receiverId === senderId;
+      const senderObjectId = new Types.ObjectId(senderId);
+      const receiverObjectId = new Types.ObjectId(receiverId);
+
+      // Trouver le dernier message entre ces deux utilisateurs
+      const lastMessage = await this.messageModel
+        .findOne({
+          $or: [
+            // Message de l'expéditeur au destinataire
+            {
+              sender: senderObjectId,
+              receiver: receiverObjectId,
+            },
+            // Message du destinataire à l'expéditeur
+            {
+              sender: receiverObjectId,
+              receiver: senderObjectId,
+            },
+          ],
+          _id: { $ne: null },
+        })
+        .sort({ createdAt: -1 })
+        .exec();
+
+      if (!lastMessage) {
+        throw new Error('Aucun message trouvé pour répondre');
+      }
+
+      // Utiliser la conversation du dernier message
+      const conversation = await this.conversationModel.findById(lastMessage.conversation);
+      
+      if (!conversation) {
+        throw new Error('Conversation introuvable pour le message');
+      }
+
+      // Créer le message de réponse
+      const messageData: any = {
+        content,
+        sender: senderObjectId,
+        receiver: receiverObjectId,
+        conversation: conversation._id,
+        isSelfNote,
+        read: isSelfNote,
+        isReply: !!lastMessage, // C'est une réponse s'il y a un message précédent
+        parentMessage: lastMessage?._id || null,
+        mentions: [],
+        notifications: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      // Gérer les mentions
+      const mentionedUsernames = await this.mentionsService.detectMentions(content);
+      if (mentionedUsernames.length > 0) {
+        const mentionedUserIds = await this.mentionsService.validateMentions(mentionedUsernames);
+        if (mentionedUserIds.length > 0) {
+          const mentionedUsers = mentionedUserIds.map(id => new Types.ObjectId(id));
+          messageData.mentions = mentionedUsers;
+          
+          // Créer des notifications pour les utilisateurs mentionnés
+          messageData.notifications = mentionedUsers.map(userId => ({
+            userId,
+            read: false,
+          }));
+        }
+      }
+
+      const message = new this.messageModel(messageData);
+      const savedMessage = await message.save();
+
+      // Mettre à jour la conversation avec le nouveau message
+      await this.conversationModel.findByIdAndUpdate(
+        conversation._id,
+        {
+          $push: { messages: savedMessage._id },
+          lastMessageAt: new Date(),
+        },
+        { new: true },
+      );
+
+      // Peupler les champs avant de retourner
+      const populatedMessage = await this.messageModel
+        .findById(savedMessage._id)
+        .populate('sender', 'firstName lastName')
+        .populate('receiver', 'firstName lastName')
+        .populate({
+          path: 'mentions',
+          select: 'firstName lastName',
+        })
+        .populate({
+          path: 'parentMessage',
+          select: 'content sender',
+          populate: {
+            path: 'sender',
+            select: 'firstName lastName',
+          },
+        })
+        .lean();
+
+      return populatedMessage;
+    } catch (error) {
+      this.logger.error(
+        `Erreur lors de la réponse au dernier message: ${error.message}`,
+      );
+      throw error;
+    }
+  }
+
   async markMessageAsRead(messageId: string, userId: string) {
     this.logger.debug(
       `Marking message ${messageId} as read for user: ${userId}`,

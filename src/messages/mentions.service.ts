@@ -25,14 +25,18 @@ export class MentionsService {
 
   async validateMentions(mentions: string[]): Promise<string[]> {
     const validMentions = await this.userModel.find({
-      firstName: { $in: mentions },
+      $or: [
+        { firstName: { $in: mentions } },
+        { username: { $in: mentions } }
+      ]
     });
 
-    if (validMentions.length !== mentions.length) {
-      throw new NotFoundException('Some mentioned users were not found');
+    if (validMentions.length === 0) {
+      return [];
     }
 
-    return validMentions.map((user) => user.firstName);
+    // Retourner les IDs des utilisateurs trouvés
+    return validMentions.map(user => user._id.toString());
   }
 
   async createMentionsNotification(

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -12,6 +12,7 @@ import {
   Conversation,
   ConversationSchema,
 } from '../conversations/schema/conversation.schema';
+import { ConversationService } from '../conversations/conversations.service';
 
 @Module({
   imports: [
@@ -32,7 +33,17 @@ import {
     }),
   ],
   controllers: [MessageController],
-  providers: [MessageGateway, MessageService, MentionsService],
-  exports: [MessageService],
+  providers: [
+    MessageGateway,
+    MessageService,
+    MentionsService,
+    ConversationService,
+    Logger,
+  ],
+  exports: [
+    MessageService,
+    MessageGateway,
+    MongooseModule.forFeature([{ name: Message.name, schema: MessageSchema }]),
+  ],
 })
 export class MessagesModule {}

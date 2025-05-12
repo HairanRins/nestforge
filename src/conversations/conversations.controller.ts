@@ -85,4 +85,17 @@ export class ConversationController {
   async getConversation(@Request() req, @Param('id') id: string) {
     return this.conversationService.findById(id);
   }
+
+  @Post(':id/mark-as-read')
+  @ApiOperation({ summary: 'Marquer tous les messages d\'une conversation comme lus' })
+  @ApiResponse({
+    status: 200,
+    description: 'Messages marqués comme lus avec succès',
+  })
+  async markConversationAsRead(
+    @Request() req,
+    @Param('id') conversationId: string,
+  ) {
+    return this.conversationService.markMessagesAsRead(conversationId, req.user.userId);
+  }
 }
