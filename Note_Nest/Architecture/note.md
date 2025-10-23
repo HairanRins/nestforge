@@ -244,5 +244,3 @@ libs/
 | Monorepo (Nx)       | ⭐⭐⭐        | Multi-app        | Plateformes complexes   |
 
 ---
-
-Souhaites-tu que je te montre **un exemple concret (code + structure)** d’une de ces architectures — par exemple **Clean Architecture avec NestJS + PostgreSQL (ou RabbitMQ)** ?
