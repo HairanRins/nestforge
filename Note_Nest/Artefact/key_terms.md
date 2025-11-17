@@ -53,7 +53,7 @@ handleCron() {
 ---
 
 ## 📡 **6. Requêtes HTTP**
-- **`@Get()`, `@Post()`, `@Put()`, `@Delete()`** : décorateurs de routes.
+- **`@Get()`, `@Post()`, `@Put()`, `@Patch()`, `@Delete()`** : décorateurs de routes.
 - **`@Param()`, `@Body()`, `@Query()`** : pour extraire les données des requêtes.
 
 ---
