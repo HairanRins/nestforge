@@ -4,7 +4,7 @@ En **NestJS**, les **helpers** sont des fonctions ou classes utilitaires qui per
 
 ---
 
-## 🧠 Pourquoi utiliser des Helpers ?
+## Pourquoi utiliser des Helpers ?
 - **Réutilisabilité** : Éviter de dupliquer du code.
 - **Lisibilité** : Séparer la logique technique de la logique métier.
 - **Testabilité** : Les helpers sont faciles à tester unitairement.
@@ -12,7 +12,7 @@ En **NestJS**, les **helpers** sont des fonctions ou classes utilitaires qui per
 
 ---
 
-## 📁 Structure d’un helper dans NestJS
+## Structure d’un helper dans NestJS
 
 Tu peux les organiser comme ceci :
 
@@ -28,7 +28,7 @@ src/
 
 ---
 
-## 📌 Exemple 1 : Un helper de date
+## Exemple 1 : Un helper de date
 
 **`date.helper.ts`**
 ```ts
@@ -58,7 +58,7 @@ export class UserService {
 
 ---
 
-## 📌 Exemple 2 : Génération d’un slug
+## Exemple 2 : Génération d’un slug
 
 **`string.helper.ts`**
 ```ts
@@ -81,7 +81,7 @@ const slug = generateSlug('Titre de l’article');
 
 ---
 
-## 📌 Exemple 3 : Vérifier si un fichier est une image
+## Exemple 3 : Vérifier si un fichier est une image
 
 **`file.helper.ts`**
 ```ts
@@ -92,7 +92,7 @@ export function isImageFile(mimetype: string): boolean {
 
 ---
 
-## ✨ Astuce : Transformer un helper en provider injecté
+## Astuce : Transformer un helper en provider injecté
 
 Par défaut, un helper est une fonction statique ou simple. Si tu as besoin de dépendances (ex: `ConfigService`, `HttpService`), tu peux aussi créer un **helper injectable** :
 

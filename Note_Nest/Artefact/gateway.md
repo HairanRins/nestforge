@@ -1,10 +1,10 @@
-# Gateway avec NestJS 
+Gateway avec NestJS 
 
 Dans NestJS, un **Gateway** (ou passerelle) est utilisé pour gérer les **communications en temps réel** via **WebSockets**, en général avec des bibliothèques comme `socket.io` ou `ws`. Cela permet de créer des applications interactives, comme des chats, des dashboards live, ou des jeux multijoueurs.
 
 ---
 
-## 📦 Installation de base avec `socket.io`
+## Installation de base avec `socket.io`
 
 ```bash
 npm install @nestjs/websockets @nestjs/platform-socket.io socket.io
@@ -12,7 +12,7 @@ npm install @nestjs/websockets @nestjs/platform-socket.io socket.io
 
 ---
 
-## 🧠 Fonctionnement global
+## Fonctionnement global
 
 * **Gateway** = point d’entrée des connexions WebSocket.
 * Utilise des **décorateurs** comme `@WebSocketGateway()`, `@SubscribeMessage()`.
@@ -22,7 +22,7 @@ npm install @nestjs/websockets @nestjs/platform-socket.io socket.io
 
 ---
 
-## 🔧 Exemple concret : Chat en temps réel
+## Exemple concret : Chat en temps réel
 
 ### 1. **Créer le Gateway `chat.gateway.ts`**
 
@@ -98,7 +98,7 @@ socket.on('message', (msg) => {
 
 ---
 
-## ⚙️ Fonctions avancées
+## Fonctions avancées
 
 * **Room join/leave** : permet de segmenter les clients dans des "salles".
 * **Emission ciblée** :
@@ -110,7 +110,7 @@ socket.on('message', (msg) => {
 
 ---
 
-## ✅ Exemple de gestion de **rooms**
+## Exemple de gestion de **rooms**
 
 ```ts
 @SubscribeMessage('joinRoom')

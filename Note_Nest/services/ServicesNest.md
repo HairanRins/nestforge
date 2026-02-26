@@ -1,10 +1,10 @@
-# Services 
+# Services 
 
-En **NestJS**, il existe plusieurs types de **services** adaptés à différents cas d’utilisation. Voici un aperçu des principaux types de services avec des **exemples concrets**. 🚀
+En **NestJS**, il existe plusieurs types de **services** adaptés à différents cas d'utilisation. Voici un aperçu des principaux types de services avec des **exemples concrets**.
 
 ---
 
-## 📌 1️⃣ Services classiques (Singleton)
+## 1 Services classiques (Singleton)
 ### ➜ Description :
 Ce sont les services les plus courants en **NestJS**. Par défaut, NestJS instancie ces services **une seule fois** (Singleton) et les partage dans toute l'application.
 
@@ -20,14 +20,14 @@ export class UserService {
 }
 ```
 
-🔹 **Cas d'utilisation** :
+**Cas d'utilisation** :
 - Services **CRUD** (User, Product, Order…)
 - Gestion des **données en mémoire** (cache temporaire)
 - Interaction avec des **repositories** (base de données)
 
 ---
 
-## 📌 2️⃣ Services avec portée (`Scope`)
+## 2️⃣ Services avec portée (`Scope`)
 ### ➜ Description :
 Par défaut, NestJS crée une **instance unique** d’un service. Mais parfois, on a besoin d’un service avec un **cycle de vie spécifique** :
 - **Request Scoped** (nouvelle instance par requête)
@@ -61,14 +61,14 @@ export class TransientService {
 }
 ```
 
-🔹 **Cas d'utilisation** :
+**Cas d'utilisation** :
 - **Logging** par requête (`RequestScoped`)
 - **Gestion de sessions temporaires**
 - **Dépendances instanciées dynamiquement** (`TransientScoped`)
 
 ---
 
-## 📌 3️⃣ Services asynchrones (`@Injectable() + async`)
+## 3️⃣ Services asynchrones (`@Injectable() + async`)
 ### ➜ Description :
 Les services **asynchrones** sont utilisés lorsqu’un service dépend d’une **connexion externe** (base de données, API, etc.).
 
@@ -84,14 +84,14 @@ export class AsyncService {
 }
 ```
 
-🔹 **Cas d'utilisation** :
+**Cas d'utilisation** :
 - Récupération de **données externes** (API, microservices)
 - Interaction avec des **bases de données**
 - Exécution de tâches en arrière-plan
 
 ---
 
-## 📌 4️⃣ Services avec dépôt (`Repository Pattern`)
+## 4️⃣ Services avec dépôt (`Repository Pattern`)
 ### ➜ Description :
 Ce type de service encapsule la logique métier et les accès à la **base de données**.
 
@@ -107,14 +107,14 @@ export class UserService {
 }
 ```
 
-🔹 **Cas d'utilisation** :
+**Cas d'utilisation** :
 - **Encapsulation de la base de données**
 - **Séparation des responsabilités** (`Service` ≠ `Controller`)
 - **Facilité de test** avec des **mocks**
 
 ---
 
-## 📌 5️⃣ Services génériques (`Generic Services`)
+## 5️⃣ Services génériques (`Generic Services`)
 ### ➜ Description :
 Permet de créer une **base de service réutilisable** pour plusieurs entités.
 
@@ -139,14 +139,14 @@ export class UserService extends GenericService<User> {
 }
 ```
 
-🔹 **Cas d'utilisation** :
+**Cas d'utilisation** :
 - **Réduction du code dupliqué**
 - **Facilité d’extension** pour de nouvelles entités
 - **Maintenance simplifiée**
 
 ---
 
-## 📌 6️⃣ Services de communication (`Event-Driven`)
+## 6️⃣ Services de communication (`Event-Driven`)
 ### ➜ Description :
 Utilisé pour envoyer **des événements** entre services (via `EventEmitter`, Kafka, RabbitMQ…).
 
@@ -162,14 +162,14 @@ export class EventService {
 }
 ```
 
-🔹 **Cas d'utilisation** :
+**Cas d'utilisation** :
 - **Microservices**
 - **Traitement en arrière-plan**
 - **Notifications et WebSockets**
 
 ---
 
-## 📌 7️⃣ Services de cache (`CacheService`)
+## 7️⃣ Services de cache (`CacheService`)
 ### ➜ Description :
 Utilisé pour **optimiser les performances** en stockant des données en mémoire.
 
@@ -189,14 +189,14 @@ export class CacheService {
 }
 ```
 
-🔹 **Cas d'utilisation** :
+**Cas d'utilisation** :
 - **Réduction des requêtes vers la base de données**
 - **Stockage de sessions utilisateur**
 - **Optimisation des performances**
 
 ---
 
-## 📌 8️⃣ Services de sécurité (`AuthService`)
+## 8️⃣ Services de sécurité (`AuthService`)
 ### ➜ Description :
 Gère l’authentification et l’autorisation des utilisateurs.
 
@@ -212,14 +212,14 @@ export class AuthService {
 }
 ```
 
-🔹 **Cas d'utilisation** :
+**Cas d'utilisation** :
 - **Authentification JWT**
 - **Gestion des rôles et permissions**
 - **OAuth2 / Social Login**
 
 ---
 
-## 🎯 Conclusion
+## Conclusion
 | **Type de Service**         | **Utilisation** |
 |----------------------------|----------------|
 | **Service classique** | Logique métier, CRUD |

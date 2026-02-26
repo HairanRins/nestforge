@@ -153,4 +153,4 @@ Les bonnes pratiques recommandées pour développer des applications avec **Nest
 
 ---
 
-En suivant ces pratiques, vous garantirez une application **maintenable**, **scalable** et **sécurisée** avec NestJS et TypeScript. 🚀
+En suivant ces pratiques, vous garantirez une application **maintenable**, **scalable** et **sécurisée** avec NestJS et TypeScript. 

@@ -33,7 +33,7 @@ async function bootstrap() {
   });
 
   await app.listen();
-  console.log('Microservice user_queue is running 🚀');
+  console.log('Microservice user_queue is running');
 }
 bootstrap();
 ```
@@ -93,7 +93,7 @@ export class UserController {
 }
 ```
 
- **→ Le client reçoit une réponse directe.**
+**→ Le client reçoit une réponse directe.**
 
 ---
 
@@ -151,7 +151,7 @@ export class NotificationController {
 }
 ```
 
- **→ Aucune réponse n’est renvoyée au client.**
+ → Aucune réponse n’est renvoyée au client.
 
 ---
 
@@ -194,12 +194,12 @@ export class NotificationController {
 
 ---
 
-## 7. Bonnes pratiques
+**Bonne pratiques**
 
-✅ Définir des **queues** claires et légères
-✅ Préfixer les commandes : `user.created`, `order.paid`, etc.
-✅ Gérer les erreurs (`try/catch`) côté consumer
-✅ Utiliser `.toPromise()` pour `send()` si besoin d’attendre la réponse
-✅ Toujours démarrer le microservice Rabbit avant d’émettre
+- Définir des **queues** claires et légères
+- Préfixer les commandes : `user.created`, `order.paid`, etc.
+- Gérer les erreurs (`try/catch`) côté consumer
+- Utiliser `.toPromise()` pour `send()` si besoin d’attendre la réponse
+- Toujours démarrer le microservice Rabbit avant d’émettre
 
 ---

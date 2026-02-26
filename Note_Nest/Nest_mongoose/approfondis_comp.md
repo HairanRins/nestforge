@@ -11,7 +11,7 @@ async findAll(): Promise<User[]> {
 ```
 est utilisée pour **récupérer tous les utilisateurs** de la base de données via le **Repository**.  
 
-Voyons **point par point** son utilité et son fonctionnement. 🚀
+Voyons **point par point** son utilité et son fonctionnement.
 
 ---
 
@@ -29,7 +29,7 @@ Voyons **point par point** son utilité et son fonctionnement. 🚀
 ## **2️⃣ Décomposition ligne par ligne**
 Regardons chaque élément du code.
 
-### **🔹 a) `async findAll()`**
+### a) `async findAll()`**
 ```ts
 async findAll(): Promise<User[]> {
 ```
@@ -41,14 +41,14 @@ async findAll(): Promise<User[]> {
 
 ---
 
-### **🔹 b) `return this.userRepository.findAll();`**
+### b) `return this.userRepository.findAll();`**
 ```ts
 return this.userRepository.findAll();
 ```
 - **`this.userRepository.findAll()`** → Appelle la méthode `findAll()` du **Repository**, qui exécute une requête dans la base de données.  
 - **Le `return`** → La promesse retournée par `userRepository.findAll()` est **directement renvoyée** par la méthode `findAll()` du Service.  
 
-✅ **Pourquoi appeler le Repository ?**  
+**Pourquoi appeler le Repository ?**  
 - Le **Service ne devrait pas** interagir directement avec Mongoose.  
 - En passant par un **Repository**, on sépare **la logique métier** du **code d’accès aux données**.  
 
@@ -121,21 +121,20 @@ GET /users
 
 ---
 
-## **📌 Pourquoi cette approche est-elle meilleure ?**
+**Pourquoi cette approche est-elle meilleure ?**
 | Approche | Avantages |
 |----------|----------|
-| **Service qui appelle le Repository** | 🏗️ Séparation claire des responsabilités |
-| **Asynchrone (`async/await`)** | ⚡ Exécution non bloquante, meilleure performance |
-| **Utilisation de Mongoose (`find()`)** | 🗄️ Requête efficace en base de données |
-| **Retourne `Promise<User[]>`** | 🔄 Compatible avec les appels asynchrones (API, frontend, etc.) |
+| **Service qui appelle le Repository** | Séparation claire des responsabilités |
+| **Asynchrone (`async/await`)** | Exécution non bloquante, meilleure performance |
+| **Utilisation de Mongoose (`find()`)** | Requête efficace en base de données |
+| **Retourne `Promise<User[]>`** | Compatible avec les appels asynchrones (API, frontend, etc.) |
 
 ---
 
-## **🎯 Conclusion**
+## Conclusion
 La fonction `findAll()` est un élément **clé** dans la gestion des utilisateurs dans une API NestJS.  
 
 Elle :  
-✅ **Récupère tous les utilisateurs** via le Repository.  
-✅ **Utilise des promesses (`async/await`)** pour ne pas bloquer l’exécution.  
-✅ **Suit une architecture modulaire** en séparant **Contrôleur → Service → Repository → Base de données**.  
-
+- **Récupère tous les utilisateurs** via le Repository.  
+- **Utilise des promesses (`async/await`)** pour ne pas bloquer l'exécution.  
+- **Suit une architecture modulaire** en séparant **Contrôleur → Service → Repository → Base de données**.

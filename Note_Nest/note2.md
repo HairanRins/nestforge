@@ -1,19 +1,24 @@
-### 🚀 **Bases et Fondamentaux de NestJS en TypeScript**  
+### **Bases et Fondamentaux de NestJS en TypeScript**
 
 NestJS est un framework Node.js basé sur TypeScript qui facilite la construction d’applications backend modulaires, testables et extensibles en suivant l'architecture **MVC** et les principes de **SOLID**.
 
 ---
 
 ## 🔹 **1. Installation et Configuration**
-### 📌 **Installation**
+
+### **Installation**
+
 ```sh
 npm i -g @nestjs/cli
 nest new my-app
 cd my-app
 npm run start:dev
 ```
-### 📌 **Structure d’un Projet NestJS**
+
+### **Structure d’un Projet NestJS**
+
 Un projet NestJS suit une structure modulaire :
+
 ```
 /src
   ├── app.module.ts  // Module racine
@@ -22,11 +27,13 @@ Un projet NestJS suit une structure modulaire :
   ├── main.ts  // Fichier d’entrée
 ```
 
-### 📌 **Bootstrap de l’Application**
+### **Bootstrap de l’Application**
+
 Le fichier `main.ts` démarre l’application avec `NestFactory` :
+
 ```ts
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -38,12 +45,15 @@ bootstrap();
 ---
 
 ## 🔹 **2. Modules, Contrôleurs, Services et Providers**
-### 📌 **Modules**
+
+### **Modules**
+
 Un module regroupe les fonctionnalités associées :
+
 ```ts
-import { Module } from '@nestjs/common';
-import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
+import { Module } from "@nestjs/common";
+import { UsersController } from "./users.controller";
+import { UsersService } from "./users.service";
 
 @Module({
   controllers: [UsersController],
@@ -52,28 +62,32 @@ import { UsersService } from './users.service';
 export class UsersModule {}
 ```
 
-### 📌 **Contrôleurs**
-Les contrôleurs gèrent les requêtes HTTP :
-```ts
-import { Controller, Get } from '@nestjs/common';
+### **Contrôleurs**
 
-@Controller('users')
+Les contrôleurs gèrent les requêtes HTTP :
+
+```ts
+import { Controller, Get } from "@nestjs/common";
+
+@Controller("users")
 export class UsersController {
   @Get()
   findAll() {
-    return ['user1', 'user2'];
+    return ["user1", "user2"];
   }
 }
 ```
 
-### 📌 **Services**
+### **Services**
+
 Les services contiennent la logique métier :
+
 ```ts
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class UsersService {
-  private users = ['user1', 'user2'];
+  private users = ["user1", "user2"];
 
   findAll() {
     return this.users;
@@ -81,10 +95,12 @@ export class UsersService {
 }
 ```
 
-### 📌 **Injection de Dépendance**
+### **Injection de Dépendance**
+
 Les services sont injectés dans les contrôleurs :
+
 ```ts
-@Controller('users')
+@Controller("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -98,25 +114,28 @@ export class UsersController {
 ---
 
 ## 🔹 **3. Gestion des Requêtes HTTP**
-### 📌 **Paramètres et Query Params**
+
+### **Paramètres et Query Params**
+
 ```ts
-@Controller('users')
+@Controller("users")
 export class UsersController {
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @Get(":id")
+  findOne(@Param("id") id: string) {
     return `User ${id}`;
   }
 
   @Get()
-  findByQuery(@Query('name') name: string) {
+  findByQuery(@Query("name") name: string) {
     return `User with name ${name}`;
   }
 }
 ```
 
-### 📌 **Gestion des Requêtes POST**
+### **Gestion des Requêtes POST**
+
 ```ts
-@Controller('users')
+@Controller("users")
 export class UsersController {
   @Post()
   create(@Body() createUserDto: { name: string }) {
@@ -128,9 +147,11 @@ export class UsersController {
 ---
 
 ## 🔹 **4. Middleware, Guards et Pipes**
-### 📌 **Middleware**
+
+### **Middleware**
+
 ```ts
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Injectable, NestMiddleware } from "@nestjs/common";
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
@@ -140,31 +161,36 @@ export class LoggerMiddleware implements NestMiddleware {
   }
 }
 ```
+
 Puis, dans `app.module.ts` :
+
 ```ts
 @Module({
   imports: [UsersModule],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('users');
+    consumer.apply(LoggerMiddleware).forRoutes("users");
   }
 }
 ```
 
-### 📌 **Guards (Contrôle d’Accès)**
+### **Guards (Contrôle d’Accès)**
+
 ```ts
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
-    return request.headers.authorization === 'secret-token';
+    return request.headers.authorization === "secret-token";
   }
 }
 ```
+
 Usage dans un contrôleur :
+
 ```ts
 @UseGuards(AuthGuard)
 @Get()
@@ -173,20 +199,23 @@ findAll() {
 }
 ```
 
-### 📌 **Pipes (Validation et Transformation)**
+### **Pipes (Validation et Transformation)**
+
 ```ts
-import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
+import { PipeTransform, Injectable, BadRequestException } from "@nestjs/common";
 
 @Injectable()
 export class ParseIntPipe implements PipeTransform {
   transform(value: string) {
     const val = parseInt(value, 10);
-    if (isNaN(val)) throw new BadRequestException('Invalid number');
+    if (isNaN(val)) throw new BadRequestException("Invalid number");
     return val;
   }
 }
 ```
+
 Utilisation :
+
 ```ts
 @Get(':id')
 findOne(@Param('id', new ParseIntPipe()) id: number) {
@@ -197,24 +226,29 @@ findOne(@Param('id', new ParseIntPipe()) id: number) {
 ---
 
 ## 🔹 **5. Base de Données avec TypeORM**
-### 📌 **Installation**
+
+### **Installation**
+
 ```sh
 npm install @nestjs/typeorm typeorm pg
 ```
-### 📌 **Configuration**
+
+### **Configuration**
+
 Dans `app.module.ts` :
+
 ```ts
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule } from "@nestjs/typeorm";
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
+      type: "postgres",
+      host: "localhost",
       port: 5432,
-      username: 'user',
-      password: 'password',
-      database: 'test',
+      username: "user",
+      password: "password",
+      database: "test",
       entities: [User],
       synchronize: true,
     }),
@@ -223,9 +257,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 export class AppModule {}
 ```
 
-### 📌 **Création d'une Entité**
+### **Création d'une Entité**
+
 ```ts
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class User {
@@ -237,7 +272,8 @@ export class User {
 }
 ```
 
-### 📌 **Utilisation dans un Service**
+### **Utilisation dans un Service**
+
 ```ts
 @Injectable()
 export class UsersService {
@@ -257,15 +293,17 @@ export class UsersService {
 ---
 
 ## 🔹 **6. Bonne Pratiques**
+
 ✅ **Utiliser des DTOs** pour valider les données entrantes  
 ✅ **Utiliser des Modules** pour séparer les fonctionnalités  
 ✅ **Gérer les erreurs avec `HttpException`**  
 ✅ **Éviter d'exposer les erreurs internes**  
 ✅ **Utiliser les Guards pour la sécurité**  
 ✅ **Configurer la validation avec `class-validator`**  
-✅ **Séparer les fichiers de configuration**  
+✅ **Séparer les fichiers de configuration**
 
 ---
 
-## 🎯 **Conclusion**
-NestJS est puissant, structuré et suit une approche modulaire qui facilite la scalabilité et la maintenance des applications. En appliquant les bonnes pratiques, on s’assure d’un code propre, sécurisé et performant. 🚀
+## **Conclusion**
+
+NestJS est puissant, structuré et suit une approche modulaire qui facilite la scalabilité et la maintenance des applications. En appliquant les bonnes pratiques, on s’assure d’un code propre, sécurisé et performant.

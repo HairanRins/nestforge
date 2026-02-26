@@ -3,7 +3,7 @@ et d'autres principes clés du développement en JavaScript/TypeScript. Voici un
 
 ---
 
-## 🔹 1. **Pourquoi Nest utilise `async/await` et `Promise` ?**
+## 1. **Pourquoi Nest utilise `async/await` et `Promise` ?**
 NestJS est construit sur **Express** ou **Fastify**, qui sont des frameworks web asynchrones tournant sur **Node.js**. 
 En raison de la nature non bloquante de Node.js, NestJS utilise **les Promises et `async/await`** pour gérer les appels asynchrones efficacement.
 
@@ -11,33 +11,33 @@ En raison de la nature non bloquante de Node.js, NestJS utilise **les Promises e
 Lorsqu'on interagit avec une base de données (par exemple, MongoDB avec Mongoose ou PostgreSQL avec TypeORM), les requêtes sont asynchrones car 
 elles nécessitent du temps pour récupérer les données.
 
-#### ❌ **Sans `async/await` (utilisation directe des Promises)**
+### Sans `async/await` (utilisation directe des Promises)
 ```ts
 getUsers(): Promise<User[]> {
   return this.userRepository.find(); // Retourne une Promise
 }
 ```
 
-#### ✅ **Avec `async/await` (meilleure lisibilité)**
+### Avec `async/await` (meilleure lisibilité)
 ```ts
 async getUsers(): Promise<User[]> {
   return await this.userRepository.find();
 }
 ```
-👉 **Avantages** :
+**Avantages** :
 - Évite les **callbacks imbriqués (callback hell)**
 - Rend le code plus **lisible et maintenable**
 - Facilite la **gestion des erreurs** avec `try/catch`
 
 ---
 
-## 🔹 2. **Le rôle de `this` dans NestJS**
+## 2. **Le rôle de `this` dans NestJS**
 Dans NestJS (et en TypeScript), `this` fait référence à l'instance de la classe en cours.
 
 ### **Problème courant avec `this`**
 Si vous utilisez une fonction anonyme, `this` peut être perdu.
 
-#### ❌ **Mauvaise utilisation de `this` dans un service**
+### Mauvaise utilisation de `this` dans un service
 ```ts
 class UserService {
   constructor(private readonly userRepository: Repository<User>) {}
@@ -47,7 +47,7 @@ class UserService {
   };
 }
 ```
-### ✅ **Bonne pratique : utiliser des méthodes de classe**
+### Bonne pratique : utiliser des méthodes de classe
 ```ts
 class UserService {
   constructor(private readonly userRepository: Repository<User>) {}
@@ -57,15 +57,15 @@ class UserService {
   }
 }
 ```
-👉 **Pourquoi c'est important ?**
+**Pourquoi c'est important ?**
 - `this` garde la bonne référence vers l'instance de la classe.
 - Pas de risque de perdre `this` si la méthode est appelée ailleurs.
 
 ---
 
-## 🔹 3. **Autres principes essentiels à maîtriser en NestJS**
+## 3. **Autres principes essentiels à maîtriser en NestJS**
 
-### ✅ **1. Le principe de l'injection de dépendances (DI)**
+### 1. Le principe de l'injection de dépendances (DI)
 NestJS suit le **pattern SOLID** et encourage **l'injection de dépendances** pour écrire du code modulaire et testable.
 
 #### **Exemple d'injection de dépendance d'un `UserService` dans un `UserController`**
@@ -80,13 +80,13 @@ export class UserController {
   }
 }
 ```
-👉 **Avantages** :
+**Avantages** :
 - Facilite **les tests unitaires**.
 - Encourage **une séparation claire des responsabilités**.
 
 ---
 
-### ✅ **2. Les Décorateurs (@Injectable, @Controller, @Module, etc.)**
+### 2. Les Décorateurs (@Injectable, @Controller, @Module, etc.)
 NestJS utilise les **décorateurs** (comme Angular) pour définir des classes et leurs rôles.
 
 | Décorateur       | Rôle |
@@ -96,7 +96,7 @@ NestJS utilise les **décorateurs** (comme Angular) pour définir des classes et
 | `@Module()` | Regroupe des services, contrôleurs et autres modules |
 | `@Get(), @Post()` | Définit des routes HTTP dans un contrôleur |
 
-#### **Exemple d'un contrôleur simple**
+### Exemple d'un contrôleur simple
 ```ts
 @Controller('users')
 export class UserController {
@@ -111,10 +111,10 @@ export class UserController {
 
 ---
 
-### ✅ **3. Le système de Modules**
+### 3. Le système de Modules
 NestJS est modulaire, chaque fonctionnalité est organisée dans un module.
 
-#### **Exemple d'un module `UserModule`**
+### Exemple d'un module `UserModule`
 ```ts
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
@@ -123,16 +123,16 @@ NestJS est modulaire, chaque fonctionnalité est organisée dans un module.
 })
 export class UserModule {}
 ```
-👉 **Avantages** :
+**Avantages** :
 - Permet une **organisation propre** du projet.
 - Favorise la **réutilisation du code**.
 
 ---
 
-### ✅ **4. Les Intercepteurs et Middleware**
+### 4. Les Intercepteurs et Middleware
 NestJS permet d'exécuter du code **avant ou après** une requête grâce aux **intercepteurs** et **middleware**.
 
-#### **Exemple d'un middleware pour logger les requêtes**
+### Exemple d'un middleware pour logger les requêtes
 ```ts
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
@@ -150,14 +150,14 @@ export class AppModule {
   }
 }
 ```
-👉 **Utilité** :
+**Utilité** :
 - Ajouter des **logs**
 - Gérer l'**authentification**
 - Modifier la **requête avant qu'elle n'arrive au contrôleur**
 
 ---
 
-## 🎯 **Résumé des concepts clés à maîtriser en NestJS**
+## **Résumé des concepts clés à maîtriser en NestJS**
 | Concept | Explication |
 |---------|------------|
 | `async/await` | Gérer l'asynchronisme proprement |

@@ -7,7 +7,7 @@ Bien sûr ! Voici une explication détaillée avec des exemples pour chaque conc
 ## 1️⃣ `protected` en TypeScript
 Le mot-clé **`protected`** limite l’accès à une propriété ou une méthode aux classes parentes et dérivées.
 
-### 🔹 Exemple :
+### Exemple :
 ```typescript
 class Parent {
   protected message: string = "Hello from Parent";
@@ -35,7 +35,7 @@ instance.display(); // "Hello from Parent"
 ## 2️⃣ `readonly` en TypeScript
 Le mot-clé **`readonly`** empêche la modification d’une propriété après son initialisation.
 
-### 🔹 Exemple :
+### Exemple :
 ```typescript
 class User {
   readonly id: number;
@@ -74,7 +74,7 @@ Ici, `userRepository` est **readonly** pour éviter une réaffectation accidente
 ## 3️⃣ `abstract` en TypeScript
 Le mot-clé **`abstract`** est utilisé pour créer des **classes et méthodes abstraites** qui servent de modèles pour d’autres classes.
 
-### 🔹 Exemple :
+### Exemple :
 ```typescript
 abstract class Animal {
   abstract makeSound(): void; // Méthode abstraite
@@ -121,7 +121,7 @@ class UserService extends BaseService<User> {
 ## 4️⃣ `super` en TypeScript
 Le mot-clé **`super`** est utilisé pour appeler le constructeur ou les méthodes de la classe parente.
 
-### 🔹 Exemple :
+### Exemple :
 ```typescript
 class Parent {
   constructor(public name: string) {}
@@ -171,11 +171,11 @@ class UserService extends BaseService {
 
 ---
 
-## 5️⃣ Services génériques en NestJS
+## 5 Services génériques en NestJS
 Les **services génériques** permettent de créer un **service réutilisable** pour différents modèles.
 
-### 🔹 Exemple :
-#### 1️⃣ Création d’un service générique
+### Exemple :
+#### 1 Création d’un service générique
 ```typescript
 @Injectable()
 export class GenericService<T> {
@@ -191,7 +191,7 @@ export class GenericService<T> {
 }
 ```
 
-#### 2️⃣ Utilisation pour un service spécifique
+#### 2 Utilisation pour un service spécifique
 ```typescript
 @Injectable()
 export class UserService extends GenericService<User> {
@@ -201,19 +201,17 @@ export class UserService extends GenericService<User> {
 }
 ```
 
-💡 **Avantages des services génériques** :
+**Avantages des services génériques** :
 - Réduction du code **dupliqué**.
 - Facilité de **maintenance**.
 - Amélioration de la **scalabilité**.
 
 ---
 
-## ✅ Conclusion
+## Conclusion
 Ces concepts sont **très utiles** en TypeScript et NestJS :
-- `protected` 🔹 protège l’accès aux propriétés/méthodes.
-- `readonly` 🔹 empêche la modification des propriétés après initialisation.
-- `abstract` 🔹 force l’implémentation dans les classes enfants.
-- `super` 🔹 permet d’appeler des méthodes/constructeurs parents.
-- **Services génériques** 🛠️ permettent de créer des services réutilisables.
-
-
+- `protected` protège l'accès aux propriétés/méthodes.
+- `readonly` empêche la modification des propriétés après initialisation.
+- `abstract` force l'implémentation dans les classes enfants.
+- `super` permet d'appeler des méthodes/constructeurs parents.
+- **Services génériques** permettent de créer des services réutilisables.

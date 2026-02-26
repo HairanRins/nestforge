@@ -7,7 +7,7 @@ asynchrone entre services. Voici les concepts clés à comprendre et maîtriser,
 
 ## 1. **Concepts fondamentaux de RabbitMQ**
 
-### 📨 1.1. **Message**
+### 1.1. **Message**
 Un message est une donnée transmise entre services via RabbitMQ. Il contient :
 - Un **corps** (payload, généralement JSON ou texte brut)
 - Des **en-têtes** (métadonnées comme l’expéditeur, la priorité…)
@@ -17,7 +17,7 @@ Un message est une donnée transmise entre services via RabbitMQ. Il contient :
 
 ---
 
-### 📮 1.2. **Exchange (Échangeur)**
+### 1.2. **Exchange (Échangeur)**
 L’**Exchange** reçoit les messages et les oriente vers les **Queues** en fonction d’une politique de routage.
 
 Il existe plusieurs types d’exchanges :
@@ -31,7 +31,7 @@ Il existe plusieurs types d’exchanges :
 
 ---
 
-### 📬 1.3. **Queue (File d'attente)**
+### 1.3. **Queue (File d'attente)**
 Une queue stocke les messages jusqu'à leur consommation par un service.
 
 > **Exemple :**  
@@ -39,7 +39,7 @@ Une queue stocke les messages jusqu'à leur consommation par un service.
 
 ---
 
-### 📤 1.4. **Producer (Producteur)**
+### 1.4. **Producer (Producteur)**
 Le producteur est l’application qui **publie** un message vers un exchange.
 
 > **Exemple :**  
@@ -47,7 +47,7 @@ Le producteur est l’application qui **publie** un message vers un exchange.
 
 ---
 
-### 🎯 1.5. **Consumer (Consommateur)**
+### 1.5. **Consumer (Consommateur)**
 Le consommateur est une application qui **écoute** une queue et traite les messages.
 
 > **Exemple :**  
@@ -55,7 +55,7 @@ Le consommateur est une application qui **écoute** une queue et traite les mess
 
 ---
 
-### 🔁 1.6. **Ack/Nack (Accusés de réception)**
+### 1.6. **Ack/Nack (Accusés de réception)**
 - `ack` (acknowledgment) : Indique que le message a été traité avec succès.
 - `nack` (negative acknowledgment) : Indique un échec, et le message peut être re-queue.
 
@@ -67,14 +67,14 @@ Le consommateur est une application qui **écoute** une queue et traite les mess
 ## 2. **Cas pratique avec NestJS et RabbitMQ**
 Prenons l’exemple d’un système où un service **Commande** notifie un service **Facturation** lorsqu’une commande est créée.
 
-### 📌 **Installation des dépendances**
+### Installation des dépendances
 ```sh
 npm install --save @nestjs/microservices amqplib
 ```
 
 ---
 
-### 📤 **Service Producteur (Commande)**
+### Service Producteur (Commande)
 ```typescript
 import { Injectable } from '@nestjs/common';
 import { ClientProxy, ClientProxyFactory, Transport } from '@nestjs/microservices';
@@ -103,7 +103,7 @@ export class OrderService {
 
 ---
 
-### 📬 **Service Consommateur (Facturation)**
+### Service Consommateur (Facturation)
 ```typescript
 import { Controller } from '@nestjs/common';
 import { EventPattern } from '@nestjs/microservices';
@@ -121,9 +121,9 @@ export class BillingService {
 ---
 
 ## 3. **Meilleures pratiques avec RabbitMQ**
-✅ **Utiliser des `ack` pour éviter la perte de messages.**  
-✅ **Utiliser des Dead Letter Queues (DLQ)** pour gérer les messages en échec.  
-✅ **Éviter les single points of failure** en ayant plusieurs consommateurs.  
-✅ **Utiliser des échanges `topic`** pour des systèmes évolutifs (`order.*` pour toutes les actions de commande).  
+- **Utiliser des `ack` pour éviter la perte de messages.**  
+- **Utiliser des Dead Letter Queues (DLQ)** pour gérer les messages en échec.  
+- **Éviter les single points of failure** en ayant plusieurs consommateurs.  
+- **Utiliser des échanges `topic`** pour des systèmes évolutifs (`order.*` pour toutes les actions de commande).  
 
 ---

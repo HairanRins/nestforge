@@ -6,13 +6,13 @@ offre plusieurs avantages en structurant l’application de manière claire et m
 ---
 
 ## **1. DTO (Data Transfer Object)**
-### **Pourquoi utiliser un DTO ?**
+**Pourquoi utiliser un DTO ?**
 Un DTO est une classe qui définit la structure des données échangées entre le client et le serveur. Il sert à :
 - **Encapsuler et valider les données** avant de les transmettre à la couche service.
 - **Sécuriser l’entrée utilisateur** en définissant des règles strictes (ex. : types, validations).
 - **Éviter l’exposition directe des entités** MongoDB pour plus de flexibilité et de sécurité.
 
-### **Exemple de DTO en NestJS**
+**Exemple de DTO en NestJS**
 Imaginons une entité `User`, voici un DTO pour créer un utilisateur :
 
 ```typescript
@@ -35,13 +35,13 @@ export class CreateUserDto {
 ---
 
 ## **2. Repository (ou service avec Mongoose Model)**
-### **Pourquoi utiliser un Repository ?**
+**Pourquoi utiliser un Repository ?**
 Dans NestJS, un repository (ou une couche service agissant comme un repository) permet :
 - **D'encapsuler la logique d’accès aux données** et d’éviter le couplage direct avec Mongoose.
 - **De centraliser les opérations CRUD** pour un meilleur contrôle et une meilleure réutilisation.
 - **D’améliorer la testabilité** en simulant facilement la base de données.
 
-### **Exemple de Repository en NestJS avec Mongoose**
+**Exemple de Repository en NestJS avec Mongoose**
 #### **Entité Mongoose (Schema & Document)**
 ```typescript
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
@@ -90,14 +90,14 @@ export class UserService {
 
 ---
 
-## **3. Comment DTO et Repository accompagnent l'entité**
+**Comment DTO et Repository accompagnent l'entité**
 | Élément | Rôle |
 |---------|------|
 | **Entité (`User`)** | Modèle représentant la structure des données MongoDB. |
 | **DTO (`CreateUserDto`)** | Valide et contrôle les données entrantes avant de les persister. |
 | **Repository (`UserService`)** | Gère l'accès et la manipulation des données dans la base MongoDB. |
 
-### **Flux global :**
+**Flux global :**
 1. Une requête HTTP arrive dans un **contrôleur** (`UserController`).
 2. Le contrôleur valide la requête avec le **DTO** (`CreateUserDto`).
 3. Les données validées sont transmises au **repository/service** (`UserService`).
@@ -106,8 +106,8 @@ export class UserService {
 
 ---
 
-## **Conclusion**
+**Conclusion**
 L’utilisation des **DTO** et des **Repositories** en NestJS avec MongoDB :
-✅ **Sécurise et valide** les données avant qu’elles atteignent la base.  
-✅ **Sépare les responsabilités**, rendant l’application plus lisible et maintenable.  
-✅ **Facilite les tests unitaires** en permettant le mock du repository.  
+**Sécurise et valide** les données avant qu'elles atteignent la base.  
+**Sépare les responsabilités**, rendant l'application plus lisible et maintenable.  
+**Facilite les tests unitaires** en permettant le mock du repository.

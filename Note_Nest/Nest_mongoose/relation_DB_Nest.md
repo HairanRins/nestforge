@@ -6,7 +6,7 @@ Voici un guide clair avec **explications** et **exemples** pour chaque type de r
 
 ---
 
-## 🧱 1. One-to-One (1:1)
+## 1. One-to-One (1:1)
 
 ### 🔹 Cas d’usage :
 Un **utilisateur** a un **profil** unique.
@@ -51,7 +51,7 @@ this.userModel.findById(userId).populate('profile');
 
 ---
 
-## 🔁 2. One-to-Many (1:N)
+## 2. One-to-Many (1:N)
 
 ### 🔹 Cas d’usage :
 Un **utilisateur** peut avoir plusieurs **articles**.
@@ -99,7 +99,7 @@ articles: Article[];
 
 ---
 
-## 🔄 3. Many-to-Many (N:N)
+## 3. Many-to-Many (N:N)
 
 ### 🔹 Cas d’usage :
 Un **utilisateur** peut aimer plusieurs **articles** et un **article** peut être aimé par plusieurs **utilisateurs**.
@@ -139,7 +139,7 @@ this.userModel.findById(userId).populate('likedArticles');
 
 ---
 
-## 🔗 4. Embedding vs Referencing — Quand utiliser quoi ?
+## 4. Embedding vs Referencing — Quand utiliser quoi ?
 
 | Méthode        | Avantages | Inconvénients | À utiliser quand... |
 |----------------|-----------|----------------|----------------------|
@@ -148,7 +148,7 @@ this.userModel.findById(userId).populate('likedArticles');
 
 ---
 
-## 📘 Bonus : Population automatique avec NestJS
+## Bonus : Population automatique avec NestJS
 
 Dans votre module, vous pouvez injecter les modèles comme ceci :
 

@@ -5,7 +5,7 @@ Voici une vue d'ensemble, y compris **`cron`** et d'autres termes importants, or
 
 ---
 
-## 📅 **1. Tâches planifiées : Cron**
+## 1. **Tâches planifiées : Cron**
 - **`@Cron()`** (du module `@nestjs/schedule`) : permet d'exécuter une tâche à intervalle régulier ou à un moment précis.
 - **`@Interval()`** : exécute une tâche à intervalles fixes (en millisecondes).
 - **`@Timeout()`** : exécute une tâche une seule fois après un délai.
@@ -22,7 +22,7 @@ handleCron() {
 
 ---
 
-## 🔧 **2. Structure de base NestJS**
+## 2. **Structure de base NestJS**
 - **Module (`@Module`)** : un conteneur regroupant des composants liés (services, contrôleurs...).
 - **Controller (`@Controller`)** : gère les routes HTTP entrantes.
 - **Service (`@Injectable`)** : contient la logique métier.
@@ -30,21 +30,21 @@ handleCron() {
 
 ---
 
-## 📦 **3. Injection de dépendances**
+## 3. **Injection de dépendances**
 - **`@Injectable()`** : rend une classe injectable.
 - **`constructor(private readonly service: MyService)`** : injection via le constructeur.
 - **`useClass`, `useValue`, `useFactory`** : stratégies d’injection personnalisées dans les providers.
 
 ---
 
-## 🧪 **4. Tests**
+## 4. **Tests**
 - **`Test.createTestingModule()`** : crée un module de test.
 - **`supertest`** : utilisé pour tester les routes HTTP.
 - **`jest`** : framework de test par défaut avec NestJS.
 
 ---
 
-## 🔐 **5. Authentification / Sécurité**
+## 5. **Authentification / Sécurité**
 - **Guards (`@UseGuards`)** : vérifient l’autorisation avant l’exécution d’une route.
 - **Interceptors** : interceptent les requêtes ou réponses pour les modifier.
 - **Pipes** : valident et transforme les données entrantes.
@@ -52,32 +52,32 @@ handleCron() {
 
 ---
 
-## 📡 **6. Requêtes HTTP**
+## 6. **Requêtes HTTP**
 - **`@Get()`, `@Post()`, `@Put()`, `@Patch()`, `@Delete()`** : décorateurs de routes.
 - **`@Param()`, `@Body()`, `@Query()`** : pour extraire les données des requêtes.
 
 ---
 
-## 🗃️ **7. Base de données**
+## 7. **Base de données**
 - **TypeORM / Prisma / Mongoose** : ORM/ODM compatibles avec NestJS.
 - **Repository pattern** : pour accéder à la base via des entités.
 
 ---
 
-## ⚙️ **8. Configuration & Environnement**
+## 8. **Configuration & Environnement**
 - **`@nestjs/config`** : module pour gérer `.env`.
 - **`ConfigModule` / `ConfigService`** : accède aux variables d’environnement.
 
 ---
 
-## 🧩 **9. Modules avancés**
+## 9. **Modules avancés**
 - **EventEmitterModule** : pour la communication entre modules via des événements.
 - **CacheModule** : système de cache intégré.
 - **ScheduleModule** : planification avec cron, timeout, interval.
 
 ---
 
-## 🧵 **10. Exécution asynchrone**
+## 10. **Exécution asynchrone**
 - **async/await** : prise en charge native.
 - **RxJS (Observable)** : utilisé avec WebSockets, gRPC, etc.
 

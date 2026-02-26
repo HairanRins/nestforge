@@ -41,4 +41,4 @@ D'après la documentation officielle de NestJS, voici les grands points des **mi
    - Scalabilité horizontale en multipliant les instances des microservices.
 
 En résumé, NestJS fournit une **architecture modulaire et extensible** pour les microservices, intégrant plusieurs protocoles de communication et 
-facilitant la gestion des interactions entre services. 🚀
+facilitant la gestion des interactions entre services. 

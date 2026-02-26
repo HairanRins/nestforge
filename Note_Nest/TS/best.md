@@ -2,7 +2,7 @@ En TypeScript, il y a plusieurs aspects à maîtriser, tant sur le plan logique 
 
 ---
 
-## 🔹 **1. Logiques et Compréhensions en TypeScript**
+## **1. Logiques et Compréhensions en TypeScript**
 ### 1.1 **Comprendre le Typage Fort**
 TypeScript est un surensemble de JavaScript qui ajoute le typage statique. Cela signifie que chaque variable, paramètre ou retour de fonction peut être défini avec un type spécifique.
 
@@ -42,7 +42,7 @@ interface Admin extends User {
 }
 ```
 
-👉 **Bonne pratique** : utiliser `interface` pour les objets et `type` pour les unions et alias.
+**Bonne pratique** : utiliser `interface` pour les objets et `type` pour les unions et alias.
 
 ---
 
@@ -69,7 +69,7 @@ let str = identity<string>("Hello");
 ```
 ---
 
-## 🛠 **2. Prise en Main et Outils**
+## **2. Prise en Main et Outils**
 ### 2.1 **Installation de TypeScript**
 Si ce n'est pas encore fait :
 ```bash
@@ -116,7 +116,7 @@ Créer `.eslintrc.json` :
 
 ---
 
-## ✅ **3. Attitudes à Adopter**
+## **3. Attitudes à Adopter**
 ### **3.1 Éviter `any` Autant que Possible**
 Laisser TypeScript inférer les types ou utiliser des types précis.
 ```typescript
@@ -165,12 +165,12 @@ Activer `strictNullChecks` dans `tsconfig.json` :
 ```
 ---
 
-## 🚀 **4. Bonnes Pratiques et Routines**
-✔ **Documenter son code** avec JSDoc  
-✔ **Utiliser des DTOs (Data Transfer Objects)** pour valider les données  
-✔ **Écrire des tests unitaires** avec Jest  
-✔ **Se former continuellement** : TypeScript évolue régulièrement  
+## **4. Bonnes Pratiques et Routines**
+- **Documenter son code** avec JSDoc  
+- **Utiliser des DTOs (Data Transfer Objects)** pour valider les données  
+- **Écrire des tests unitaires** avec Jest  
+- **Se former continuellement** : TypeScript évolue régulièrement  
 
 ---
 
-En appliquant ces concepts, tu seras plus efficace et produiras un code robuste et lisible en TypeScript. 😊🔥
+En appliquant ces concepts, tu seras plus efficace et produiras un code robuste et lisible en TypeScript.

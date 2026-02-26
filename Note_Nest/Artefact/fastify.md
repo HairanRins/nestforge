@@ -1,4 +1,4 @@
-# Fastify dans **NestJS** 
+Fastify dans **NestJS** 
 
 Par défaut, **NestJS** utilise **Express** comme serveur HTTP.  
 **Fastify** est une alternative plus **rapide** et **légère** à Express.
@@ -41,7 +41,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-> 🔥 Ici, au lieu de `NestApplication` (Express par défaut), tu crées une `NestFastifyApplication` avec `FastifyAdapter`.
+Ici, au lieu de `NestApplication` (Express par défaut), tu crées une `NestFastifyApplication` avec `FastifyAdapter`.
 
 ---
 
@@ -61,7 +61,7 @@ export class HelloController {
 }
 ```
 
-**✅ Ça fonctionne pareil !**
+**Ça fonctionne pareil !**
 
 ---
 
@@ -87,7 +87,7 @@ await app.register(cors, {
 
 | Point                     | Express (défaut) | Fastify (option) |
 |----------------------------|------------------|------------------|
-| Vitesse                    | Bonne            | Excellente 🚀     |
-| Consommation mémoire       | Correcte          | Meilleure 🔥       |
+| Vitesse                    | Bonne            | Excellente |
+| Consommation mémoire       | Correcte          | Meilleure |
 | Facilité d'intégration     | Native            | Nécessite un `FastifyAdapter` |
 | Compatibilité middlewares  | Large             | Attention à la compatibilité |
